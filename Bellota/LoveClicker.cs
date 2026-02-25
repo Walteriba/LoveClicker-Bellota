@@ -40,6 +40,7 @@ namespace Bellota
         private Point _dragFormPoint;
 
         private string[] _images;
+        private int _currentImageIndex = -1;
 
         public LoveClicker()
         {
@@ -100,7 +101,7 @@ namespace Bellota
                 "cherry_blossom5.gif"
             ];
 
-            LoadRandomImage();
+            LoadImage();
 
             _pictureBox.MouseClick += (s, e) =>
             {
@@ -108,7 +109,7 @@ namespace Bellota
                 {
                     if (Control.ModifierKeys == Keys.Control)
                     {
-                        ChangeRandomImage();
+                        ChangeImage();
                         return;
                     }
 
@@ -122,22 +123,31 @@ namespace Bellota
             this.Controls.Add(_pictureBox);
         }
 
-        private void LoadRandomImage()
+        private void LoadImage()
         {
             if (_images == null || _images.Length == 0)
                 return;
 
-            int index = _random.Next(_images.Length);
+            if (_currentImageIndex == -1)
+            {
+                _currentImageIndex = _random.Next(_images.Length);
+            }
+            else
+            {
+                _currentImageIndex++;
+                if (_currentImageIndex >= _images.Length)
+                    _currentImageIndex = 0;
+            }
 
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _images[index]);
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _images[_currentImageIndex]);
 
             _pictureBox.Image?.Dispose();
             _pictureBox.Image = Image.FromFile(path);
         }
 
-        private void ChangeRandomImage()
+        private void ChangeImage()
         {
-            LoadRandomImage();
+            LoadImage();
         }
 
         private void SubscribeToInput()
