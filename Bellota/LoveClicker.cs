@@ -339,7 +339,7 @@ namespace Bellota
             {
                 DialogResult result =
                     MessageBox.Show(
-                        "¿Querés cerrarlo o lo dejamos cuidándote un ratito más?\n\nTe amo 💕",
+                        "¿Querés cerrarlo o lo dejamos cuidándote un ratito más?\n\n 💕 Te amo 💕",
                         "Mensaje importante para mi Bellota",
                         MessageBoxButtons.YesNo);
 
