@@ -45,6 +45,9 @@ namespace Bellota
         private string[] _images;
         private int _currentImageIndex = -1;
 
+        bool yaRespondioTeAmo = false;
+        string _typedText = "";
+
         public LoveClicker()
         {
             InitializeComponent();
@@ -54,20 +57,6 @@ namespace Bellota
             EnableDrag(this);
             EnableDrag(_pictureBox!);
             StartFullscreenWatcher();
-        }
-
-        private void SetupMinimalistWindow()
-        {
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.TopMost = true;
-            this.ShowInTaskbar = false;
-            this.Size = new Size(FormSize, FormSize);
-            this.StartPosition = FormStartPosition.Manual;
-            this.DoubleBuffered = true;
-
-            Color transparentColor = Color.LightPink;
-            this.BackColor = transparentColor;
-            this.TransparencyKey = transparentColor;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -85,6 +74,42 @@ namespace Bellota
             this.Opacity = 0;
 
             StartMagicAppearance();
+        }
+
+        protected override bool ShowWithoutActivation => true;
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                DialogResult result =
+                    MessageBox.Show(
+                        "¿Querés cerrarlo o lo dejamos cuidándote un ratito más?\n\n 💕 Te amo 💕",
+                        "Mensaje importante para mi Bellota",
+                        MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+            _globalHook?.Dispose();
+            base.OnFormClosing(e);
+        }
+
+        private void SetupMinimalistWindow()
+        {
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.TopMost = true;
+            this.ShowInTaskbar = false;
+            this.Size = new Size(FormSize, FormSize);
+            this.StartPosition = FormStartPosition.Manual;
+            this.DoubleBuffered = true;
+
+            Color transparentColor = Color.LightPink;
+            this.BackColor = transparentColor;
+            this.TransparencyKey = transparentColor;
         }
 
         private void StartMagicAppearance()
@@ -217,6 +242,22 @@ namespace Bellota
                 _keyCount++;
                 BeatAnimation();
 
+                _typedText += char.ToLower(e.KeyChar);
+
+                if (_typedText.Length > 20)
+                    _typedText = _typedText.Substring(_typedText.Length - 20);
+
+                if (_typedText.Contains("te amo") && !yaRespondioTeAmo)
+                {
+                    yaRespondioTeAmo = true;
+                    ShowLoveMessage("Yo más 🤍");
+                }
+
+                if (!_typedText.Contains("te amo"))
+                {
+                    yaRespondioTeAmo = false;
+                }
+
                 if (_keyCount >= 50)
                 {
                     ShowLoveMessage();
@@ -268,47 +309,39 @@ namespace Bellota
                 "Te amo",
                 "Tomá agüita",
                 "Sos linda",
-                "¡Ánimo!",
+                "¿Cuando nos vemos?",
                 "Sos mi lugar favorito",
                 "Todo es mejor con vos",
-                "Gracias por existir",
                 "Sos increíble",
                 "Me hacés muy feliz",
                 "Estoy orgulloso de vos",
                 "Siempre estoy para vos",
-                "Sos luz",
                 "Tu sonrisa es mi paz",
                 "Qué suerte coincidir con vos",
-                "Te pienso",
+                "Te pienso siempre",
                 "Te elegiría mil veces",
                 "Sos mi persona favorita",
                 "Me encantás",
-                "Sos magia",
                 "Vas re bien",
                 "Confío en vos",
                 "Sos más fuerte de lo que creés",
                 "Tu esfuerzo vale muchísimo",
                 "No te olvides de descansar",
                 "Estoy con vos",
-                "Hoy también cuenta",
                 "Me encanta compartir la vida con vos",
                 "Tu risa me arregla el día",
                 "Te abrazo fuerte",
                 "Siempre nosotros",
-                "Sos arte",
-                "Tu forma de ser es hermosa",
                 "Sos única",
                 "Me hacés bien",
                 "Qué lindo es amarte",
                 "Un besito virtual 💕",
                 "Sos hermosa",
-                "Mini pausa para sonreír", "Un mimo a la distancia",
+                "Un mimito a la distancia",
                 "Te extraño siempre",
                 "Estoy orgulloso de quién sos",
                 "Gracias por tanto",
                 "Sos mi casualidad favorita",
-                "Yo elijo quedarme a tu lado",
-                "Sos mi lugar seguro",
                 "Me encanta tu forma de ser",
                 "¿Ya me enviaste mi fotito diaria?"
             };
@@ -339,7 +372,7 @@ namespace Bellota
                     int alpha = Math.Max(0, 255 - ((i - 15) * 17));
                     msg.ForeColor = Color.FromArgb(alpha, msg.ForeColor);
                 }
-                await Task.Delay(60);
+                await Task.Delay(70);
             }
 
             this.Controls.Remove(msg);
@@ -388,28 +421,6 @@ namespace Bellota
 
                 this.TopMost = true;
             }
-        }
-
-        protected override bool ShowWithoutActivation => true;
-
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing)
-            {
-                DialogResult result =
-                    MessageBox.Show(
-                        "¿Querés cerrarlo o lo dejamos cuidándote un ratito más?\n\n 💕 Te amo 💕",
-                        "Mensaje importante para mi Bellota",
-                        MessageBoxButtons.YesNo);
-
-                if (result == DialogResult.No)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            }
-            _globalHook?.Dispose();
-            base.OnFormClosing(e);
         }
     }
 }
